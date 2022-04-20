@@ -40,11 +40,13 @@ Mind you that installing additional packages can break the container.
 ## Authorization Token
 
 Get the authorization token running the following command on your terminal:
+
 ```sh
 docker exec alisio-jupyter-lab jupyter server list
 ```
 
 It should return the authorization token among other information:
+
 ```
 Currently running servers:
 http://effae095fdb9:8888/?token=9e5ad61ebce3d2b9050b5a1eege0a6eca4cf118c05ee7def :: /opt/jupyterlab/notebooks
