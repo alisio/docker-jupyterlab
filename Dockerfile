@@ -8,11 +8,13 @@ RUN mkdir -p /opt/jupyterlab/notebooks
 RUN mkdir -p /opt/jupyterlab/config
 
 RUN apt update && apt install -y \
+  libffi-dev \
   python3 \
   python3-pip \
   python3-dev
 
-RUN pip install jupyterlab==3.3.4
+RUN pip install --upgrade pip && \
+  pip install jupyterlab==3.3.4
 
 EXPOSE 8888
 
