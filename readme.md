@@ -19,8 +19,8 @@ Basic usage with default python packages:
 
 ```sh
 docker run \
-  --name alisio-jupyter-lab
-  -p 8888:8888
+  --name alisio-jupyter-lab \
+  -p 8888:8888 \
   -v <path to notebooks>:/opt/jupyterlab/notebooks \
   -v <path to config>:/opt/jupyterlab/config \
   alisio/jupyter-lab
@@ -34,11 +34,11 @@ a space (e.g: "numpy pandas requests"):
 
 ```sh
 docker run \
-  --name alisio-jupyter-lab
-  -p 8888:8888
+  --name alisio-jupyter-lab \
+  -p 8888:8888 \
   -v <path to notebooks>:/opt/jupyterlab/notebooks \
   -v <path to config>:/opt/jupyterlab/config \
-  -e PIP_PACKAGES="package1 package2 ..."
+  -e PIP_PACKAGES="package1 package2 ..." \
   alisio/jupyter-lab
 ```
 
