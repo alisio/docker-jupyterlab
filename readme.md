@@ -4,6 +4,13 @@ Build a docker image for a container capable of running jupyter notebooks using 
 The image is flexible enough so you can install additional python packages as
 needed using special environment variables.
 
+# Build
+
+Build the image running the command inside the repo folder:
+```
+docker build -t alisio/jupyter-lab .
+```
+
 # Usage
 
 ## Basic
