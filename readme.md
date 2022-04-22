@@ -1,8 +1,31 @@
 # Docker Jupyter Lab
 
-Build a docker image for a container capable of running jupyter notebooks using Jupyter Lab.
-The image is flexible enough so you can install additional python packages as
-needed using special environment variables.
+Build and deploy a container running jupyter notebooks using Jupyter Lab.
+The Dockerfile creates an image that is flexible enough so you can install additional python
+packages at run-time as needed using special environment variables.
+
+You can build your own image or pull it from the docker hub [`alisio/jupyter-lab`](https://hub.docker.com/r/alisio/jupyter-lab)
+
+There are images available for the following architectures:
+
+* linux/amd64
+* linux/arm64
+* linux/arm/v7
+
+# Preinstalled Python libs
+
+The following python packages are installer during the build:
+
+* `jupyterlab` 3.3.4
+* `beautifulsoup4` 4.11.1
+* `matplotlib` 3.5.1
+* `numpy` 1.22.3
+* `pandas` 1.4.2
+* `scikit` mage 0.19.2
+* `scikit` earn 1.0.2
+* `scipy` 1.8.0
+* `swat` 1.6.1
+
 
 # Build
 
@@ -11,9 +34,9 @@ Build the image running the command inside the repo folder:
 docker build -t alisio/jupyter-lab .
 ```
 
-# Usage
+# Run
 
-## Basic
+## Basic container
 
 Basic usage with default python packages:
 
