@@ -1,6 +1,5 @@
 # Docker Jupyter Lab
-
-Build and deploy a container running jupyter notebooks using Jupyter Lab.
+Build and deploy a container capable of running jupyter notebooks using Jupyter Lab.
 The Dockerfile creates an image that is flexible enough so you can install additional python
 packages at run-time as needed using special environment variables.
 
