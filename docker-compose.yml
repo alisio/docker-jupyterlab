@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  jupyterlab:
+    build: .
+    container_name: jupyterlab
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./notebooks:/opt/jupyterlab/notebooks
+      - jupyter-config:/opt/jupyterlab/config
+    environment:
+      - JUPYTER_PORT=8888
+      # - PIP_PACKAGES=matplotlib seaborn  # Optional: install additional packages
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/api"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  jupyter-config:
