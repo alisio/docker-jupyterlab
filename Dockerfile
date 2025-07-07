@@ -1,39 +1,56 @@
-FROM ubuntu:22.04
+# Base image optimized for Python applications
+FROM python:3.12-slim
 
-# Environment variable to set directory, other than the default, for Jupyter config files.
-ENV JUPYTER_CONFIG_DIR "/opt/jupyterlab/config"
+# Metadata
+LABEL maintainer="alisio"
+LABEL description="Minimal JupyterLab container based on Python 3.12 slim"
+LABEL version="1.0"
 
-# Map your notebooks folder to /notebooks
-RUN mkdir -p /opt/jupyterlab/notebooks
-RUN mkdir -p /opt/jupyterlab/config
+# Environment variables
+ENV DEBIAN_FRONTEND=noninteractive \
+    JUPYTER_CONFIG_DIR="/opt/jupyterlab/config" \
+    JUPYTER_PORT=8888 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
-RUN apt update && apt install -y \
-      gfortran \
-      libffi-dev \
-      libblas3 \
-      liblapack3 \
-      liblapack-dev \
-      libblas-dev \
-      libopenblas-dev \
-      libjpeg-dev \
-      python3 \
-      python3-pip \
-      python3-dev
+# Install minimal system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    tini \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip && \
-    pip install --upgrade setuptools wheel && \
-    pip install jupyterlab==3.3.4 && \
-    pip install \
-      beautifulsoup4==4.11.1 \
-      numpy==1.22.3 \
-      pandas==1.4.2 \
-      swat==1.6.1
-RUN pip install matplotlib==3.5.1
-RUN pip install  \
-      scikit-image==0.19.2 \
-      scikit-learn==1.0.2 \
-      scipy==1.8.0
+# Create non-root user with specific UID/GID for better compatibility
+RUN groupadd -g 1001 jupyter && \
+    useradd -u 1001 -g jupyter -m -s /bin/bash jupyter
 
-EXPOSE 8888
+# Create directories and set permissions
+RUN mkdir -p /opt/jupyterlab/{notebooks,config} && \
+    chown -R jupyter:jupyter /opt/jupyterlab
 
-CMD test ! -z $PIP_PACKAGES && pip install $PIP_PACKAGES; jupyter-lab /opt/jupyterlab/notebooks --ip 0.0.0.0 --allow-root --no-browser
+# Copy and install Python requirements
+COPY requirements.txt /tmp/
+RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
+    rm /tmp/requirements.txt
+
+# Copy entrypoint script and set permissions
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Switch to non-root user
+USER jupyter
+
+# Set working directory
+WORKDIR /opt/jupyterlab/notebooks
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:${JUPYTER_PORT}/api || exit 1
+
+# Expose port
+EXPOSE ${JUPYTER_PORT}
+
+# Use tini as init system for better signal handling
+ENTRYPOINT ["tini", "--", "entrypoint.sh"]
